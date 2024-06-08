@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace HotelBooking.Infrastructure.Context;
-internal sealed class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>, IUnitOfWork
+public sealed class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRole<Guid>, Guid>, IUnitOfWork
 {
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {
@@ -27,5 +27,7 @@ internal sealed class ApplicationDbContext : IdentityDbContext<AppUser, Identity
         builder.Ignore<City>();
         builder.Ignore<HotelType>();
         builder.Ignore<RoomType>();
+
+
     }
 }

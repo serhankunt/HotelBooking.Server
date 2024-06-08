@@ -1,6 +1,10 @@
 using DefaultCorsPolicyNugetPackage;
 using HotelBooking.Application;
+using HotelBooking.Application.Converter;
+using HotelBooking.Application.Repositories;
+using HotelBooking.Domain.Enums;
 using HotelBooking.Infrastructure;
+using HotelBooking.Infrastructure.Repositories;
 using HotelBooking.WebAPI.Middlewares;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.OpenApi.Models;
@@ -11,11 +15,24 @@ builder.Services.AddDefaultCors();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
+builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+builder.Services.AddScoped<IRoomRespository, RoomRepository>();
+
 builder.Services.AddExceptionHandler<ExceptionHandler>();
 builder.Services.AddProblemDetails();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddNewtonsoftJson(options =>
+    {
+        options.SerializerSettings.Converters.Add(new SmartEnumJsonConverter<City>());
+        options.SerializerSettings.Converters.Add(new SmartEnumJsonConverter<HotelType>());
+        options.SerializerSettings.Converters.Add(new SmartEnumJsonConverter<RoomType>());
+    }); ;
 builder.Services.AddEndpointsApiExplorer();
+
+
+
+
 builder.Services.AddSwaggerGen(setup =>
 {
     var jwtSecuritySheme = new OpenApiSecurityScheme
