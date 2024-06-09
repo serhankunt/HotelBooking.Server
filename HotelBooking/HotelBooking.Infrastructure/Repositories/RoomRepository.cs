@@ -41,9 +41,9 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRespository
         throw new NotImplementedException();
     }
 
-    public Task<bool> AnyAsync(Expression<Func<Room, bool>> expression, CancellationToken cancellationToken = default)
+    public async Task<bool> AnyAsync(Expression<Func<Room, bool>> expression, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        return await context.Set<Room>().AnyAsync(expression, cancellationToken);
     }
 
 

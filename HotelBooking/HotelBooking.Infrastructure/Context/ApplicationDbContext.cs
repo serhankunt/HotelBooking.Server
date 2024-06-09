@@ -13,6 +13,7 @@ public sealed class ApplicationDbContext : IdentityDbContext<AppUser, IdentityRo
     }
     public DbSet<Hotel> Hotels { get; set; }
     public DbSet<Room> Rooms { get; set; }
+    public DbSet<Reservation> Reservations { get; set; }
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfigurationsFromAssembly(typeof(DependencyInjection).Assembly);

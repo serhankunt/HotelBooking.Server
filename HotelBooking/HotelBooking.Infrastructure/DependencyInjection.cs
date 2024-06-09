@@ -19,6 +19,8 @@ public static class DependencyInjection
             options.UseSqlServer(configuration.GetConnectionString("SqlServer"));
         });
 
+
+
         services.AddScoped<IUnitOfWork>(srv => srv.GetRequiredService<ApplicationDbContext>());
 
         services
