@@ -19,14 +19,14 @@ public class ExceptionHandler : IExceptionHandler
 
             errorResult = Result<string>.Failure(403, ((ValidationException)exception).Errors.Select(s => s.PropertyName).ToList());
 
-            await httpContext.Response.WriteAsync(JsonSerializer.Serialize(errorResult));
+            await httpContext.Response.WriteAsync(JsonSerializer.Serialize(errorResult), cancellationToken);
 
             return true;
         }
 
         errorResult = Result<string>.Failure(exception.Message);
 
-        await httpContext.Response.WriteAsync(JsonSerializer.Serialize(errorResult));
+        await httpContext.Response.WriteAsync(JsonSerializer.Serialize(errorResult), cancellationToken);
 
         return true;
     }

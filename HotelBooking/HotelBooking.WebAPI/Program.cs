@@ -30,9 +30,6 @@ builder.Services.AddControllers()
     }); ;
 builder.Services.AddEndpointsApiExplorer();
 
-
-
-
 builder.Services.AddSwaggerGen(setup =>
 {
     var jwtSecuritySheme = new OpenApiSecurityScheme

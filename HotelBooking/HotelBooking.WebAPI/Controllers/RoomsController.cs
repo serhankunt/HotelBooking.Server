@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HotelBooking.WebAPI.Controllers;
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [ApiController]
 
 public class RoomsController(IMediator mediator) : ControllerBase
@@ -13,6 +13,6 @@ public class RoomsController(IMediator mediator) : ControllerBase
     {
         var response = await mediator.Send(request, cancellationToken);
 
-        return StatusCode(response.StatusCode);
+        return StatusCode(response.StatusCode, response);
     }
 }

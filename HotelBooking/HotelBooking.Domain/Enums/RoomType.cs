@@ -14,4 +14,9 @@ public class RoomType : SmartEnum<RoomType>
 
     }
 
+    public static RoomType CreateNewRoomType(string name, int value)
+    {
+        return new RoomType(name, value);
+    }
+
 }

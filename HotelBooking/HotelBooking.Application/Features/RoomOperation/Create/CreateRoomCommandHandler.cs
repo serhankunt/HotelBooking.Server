@@ -29,7 +29,7 @@ public class CreateRoomCommandHandler(
             HotelId = request.HotelId
         };
 
-        await roomRespository.CreateAsync(room);
+        await roomRespository.AddAsync(room);
         return Result<string>.Succeed("Oda baþarýlý bir þekilde oluþturuldu");
 
     }

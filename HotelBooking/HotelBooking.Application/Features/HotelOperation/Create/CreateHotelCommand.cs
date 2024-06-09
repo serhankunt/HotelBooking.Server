@@ -1,5 +1,4 @@
 using HotelBooking.Application.Converter;
-using HotelBooking.Application.Features.RoomOperation.Create;
 using HotelBooking.Domain.Enums;
 using MediatR;
 using System.Text.Json.Serialization;
@@ -17,5 +16,5 @@ public class CreateHotelCommand : IRequest<Result<string>>
     public string Town { get; set; } = default!;
     [JsonConverter(typeof(SmartEnumJsonConverter<HotelType>))]
     public HotelType HotelType { get; set; } = default!;
-    public List<CreateRoomCommand> Rooms { get; set; } = default!;
+    //public List<CreateRoomCommand> Rooms { get; set; } = default!;
 }

@@ -25,9 +25,10 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRespository
         throw new NotImplementedException();
     }
 
-    public Task AddAsync(Room entity, CancellationToken cancellationToken = default)
+    public async Task AddAsync(Room entity, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        await context.Set<Room>().AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     public Task AddRangeAsync(ICollection<Room> entities, CancellationToken cancellationToken = default)

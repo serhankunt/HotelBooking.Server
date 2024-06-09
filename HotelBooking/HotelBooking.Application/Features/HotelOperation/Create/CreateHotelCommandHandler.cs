@@ -24,20 +24,20 @@ public class CreateHotelCommandHandler(IHotelRepository hotelRepository) : IRequ
             Rooms = new List<Room>()
         };
 
-        if (request.Rooms is not null)
-        {
-            foreach (var roomCommand in request.Rooms)
-            {
-                var room = new Room
-                {
-                    RoomType = roomCommand.RoomType,
-                    Quantity = roomCommand.Quantity,
-                    Hotel = hotel
-                };
+        //if (request.Rooms is not null)
+        //{
+        //    foreach (var roomCommand in request.Rooms)
+        //    {
+        //        var room = new Room
+        //        {
+        //            RoomType = roomCommand.RoomType,
+        //            Quantity = roomCommand.Quantity,
+        //            Hotel = hotel
+        //        };
 
-                hotel.Rooms.Add(room);
-            }
-        }
+        //        hotel.Rooms.Add(room);
+        //    }
+        //}
 
         await hotelRepository.AddAsync(hotel);
         return Result<string>.Succeed("Otel baþarýyla oluþturuldu");
