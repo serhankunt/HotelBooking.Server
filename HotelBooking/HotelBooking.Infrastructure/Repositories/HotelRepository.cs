@@ -34,6 +34,11 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
         await context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task<List<Hotel>> GetAllHotel()
+    {
+        return await context.Set<Hotel>().ToListAsync();
+    }
+
     public Task<Hotel?> GetHotelType(HotelType hotelType, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
@@ -138,6 +143,8 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
     {
         throw new NotImplementedException();
     }
+
+
 }
 
 
