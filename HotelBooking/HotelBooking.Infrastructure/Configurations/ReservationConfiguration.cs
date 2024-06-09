@@ -10,5 +10,18 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
     {
         builder.Property(p => p.Price)
             .HasColumnType("money");
+
+        builder
+            .HasOne(r => r.Hotel)
+            .WithMany(h => h.Reservations!)
+            .HasForeignKey(r => r.HotelId);
+
+        builder
+            .HasOne(p => p.Room)
+            .WithMany()
+            .HasForeignKey(r => r.RoomId);
+
+
+
     }
 }

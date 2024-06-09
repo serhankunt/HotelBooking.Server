@@ -13,7 +13,10 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRespository
     {
         await context.Set<Room>().AddAsync(room);
         await context.SaveChangesAsync();
-
+    }
+    public async Task<Room?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        return await context.Set<Room>().FindAsync(new object[] { id }, cancellationToken);
     }
     public async Task GetHotelTypeAsync(RoomType roomType, CancellationToken cancellationToken)
     {

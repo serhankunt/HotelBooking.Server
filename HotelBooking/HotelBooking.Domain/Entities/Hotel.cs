@@ -11,6 +11,7 @@ public sealed class Hotel : Entity
     public decimal? Rating { get; set; }
     public HotelType HotelType { get; set; } = default!;
     public ICollection<Room> Rooms { get; set; } = default!;
+    public ICollection<Reservation?> Reservations { get; set; } = default!;
 
 
 }
