@@ -9,6 +9,7 @@ namespace HotelBooking.Infrastructure.Repositories;
 
 public class HotelRepository(ApplicationDbContext context) : IHotelRepository
 {
+
     public async Task<Hotel?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await context.Set<Hotel>().FindAsync(new object[] { id }, cancellationToken);

@@ -9,6 +9,21 @@ namespace HotelBooking.Infrastructure.Repositories;
 
 public class RoomRepository(ApplicationDbContext context) : IRoomRespository
 {
+    public async Task<int> GetCapacityByIdAsync(Guid Id, CancellationToken cancellationToken)
+    {
+        //List<Room> rooms = await context.Set<Room>().OrderBy(p=>p.Id).ToListAsync();
+        List<Room> rooms = await context.Rooms
+            .Where(p => p.HotelId == Id)
+            .ToListAsync();
+        int capacity = 0;
+
+        foreach (var room in rooms)
+        {
+            capacity += room.Quantity;
+        }
+
+        return capacity;
+    }
     public async Task CreateAsync(Room room)
     {
         await context.Set<Room>().AddAsync(room);

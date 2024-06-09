@@ -1,5 +1,6 @@
 ﻿using HotelBooking.Application.Features.HotelOperation.Create;
 using HotelBooking.Application.Features.HotelOperation.GetById;
+using HotelBooking.Application.Features.HotelOperation.GetCapacityById;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,6 +21,15 @@ public class HotelsController(IMediator mediator) : ControllerBase
     public async Task<IActionResult> GetById(GetByIdHotelCommand request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
+
+        return StatusCode(response.StatusCode, response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> GetCapacityById(GetCapacityHotelByIdCommand request, CancellationToken cancellationToken)
+    {
+        var response = await mediator.Send(request, cancellationToken);
+
         return StatusCode(response.StatusCode, response);
     }
 
