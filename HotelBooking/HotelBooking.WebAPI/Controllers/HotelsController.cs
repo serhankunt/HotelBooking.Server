@@ -1,4 +1,5 @@
 ﻿using HotelBooking.Application.Features.HotelOperation.Create;
+using HotelBooking.Application.Features.HotelOperation.GetAvailableRoomOfHotelsById;
 using HotelBooking.Application.Features.HotelOperation.GetById;
 using HotelBooking.Application.Features.HotelOperation.GetCapacityById;
 using MediatR;
@@ -27,6 +28,14 @@ public class HotelsController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> GetCapacityById(GetCapacityHotelByIdCommand request, CancellationToken cancellationToken)
+    {
+        var response = await mediator.Send(request, cancellationToken);
+
+        return StatusCode(response.StatusCode, response);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> GetAvailableRoomOfHotelsById(GetAvailableRoomOfHotelsByIdCommand request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
 

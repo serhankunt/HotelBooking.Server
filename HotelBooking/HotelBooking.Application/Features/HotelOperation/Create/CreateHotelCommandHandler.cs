@@ -31,7 +31,7 @@ public class CreateHotelCommandHandler(IHotelRepository hotelRepository) : IRequ
                 var room = new Room
                 {
                     RoomType = roomCommand.RoomType,
-                    Quantity = roomCommand.Quantity,
+                    TotalRoomCount = roomCommand.Quantity,
                     Hotel = hotel
                 };
 

@@ -25,7 +25,8 @@ public class CreateRoomCommandHandler(
         var room = new Room
         {
             RoomType = request.RoomType,
-            Quantity = request.Quantity,
+            TotalRoomCount = request.Quantity,
+            AvailableRoomCount = request.Quantity,
             HotelId = request.HotelId
         };
 

@@ -6,7 +6,8 @@ namespace HotelBooking.Domain.Entities;
 public sealed class Room : Entity
 {
     public RoomType RoomType { get; set; } = default!;
-    public int Quantity { get; set; }
+    public int TotalRoomCount { get; set; }
+    public int AvailableRoomCount { get; set; }
     public Guid HotelId { get; set; }
     public Hotel Hotel { get; set; } = default!;
 }

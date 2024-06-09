@@ -9,9 +9,24 @@ namespace HotelBooking.Infrastructure.Repositories;
 
 public class RoomRepository(ApplicationDbContext context) : IRoomRespository
 {
+    public async Task<int> GetAvailableRoomOfHotelsByIdAsync(Guid Id, CancellationToken cancellationToken)
+    {
+        List<Room> rooms = await context.Rooms
+            .Where(p => p.HotelId == Id)
+            .ToListAsync();
+
+        int capacity = 0;
+
+        foreach (var room in rooms)
+        {
+            capacity += room.AvailableRoomCount;
+        }
+
+        return capacity;
+    }
     public async Task<int> GetCapacityByIdAsync(Guid Id, CancellationToken cancellationToken)
     {
-        //List<Room> rooms = await context.Set<Room>().OrderBy(p=>p.Id).ToListAsync();
+
         List<Room> rooms = await context.Rooms
             .Where(p => p.HotelId == Id)
             .ToListAsync();
@@ -19,7 +34,7 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRespository
 
         foreach (var room in rooms)
         {
-            capacity += room.Quantity;
+            capacity += room.TotalRoomCount;
         }
 
         return capacity;
@@ -157,4 +172,6 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRespository
     {
         throw new NotImplementedException();
     }
+
+
 }

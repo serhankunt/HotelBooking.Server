@@ -9,7 +9,7 @@ public class Reservation : Entity
     public Guid HotelId { get; set; } = default!;
     public Hotel Hotel { get; set; } = default!;
     public Guid RoomId { get; set; } = default!;
-    public Room Room { get; set; } = default!;
+    //public Room Room { get; set; } = default!;
     public DateTime CheckInDate { get; set; }
     public DateTime CheckOutDate { get; set; }
     public int AdultGuestCount { get; set; }

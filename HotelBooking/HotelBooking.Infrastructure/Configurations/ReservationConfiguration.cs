@@ -16,10 +16,10 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
             .WithMany(h => h.Reservations!)
             .HasForeignKey(r => r.HotelId);
 
-        builder
-            .HasOne(p => p.Room)
-            .WithMany()
-            .HasForeignKey(r => r.RoomId);
+        //builder
+        //    .HasOne(p => p.Room)
+        //    .WithMany()
+        //    .HasForeignKey(r => r.RoomId);
 
 
 
