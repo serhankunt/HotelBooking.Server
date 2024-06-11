@@ -1,12 +1,19 @@
 using HotelBooking.Application.Repositories;
 using HotelBooking.Domain.Entities;
 using HotelBooking.Infrastructure.Context;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace HotelBooking.Infrastructure.Repositories;
 
 public class ReservationRepository(ApplicationDbContext context) : IReservationRepository
 {
+    public async Task<IEnumerable<Reservation>> GetExpiredReservationsAsync(DateTime currentDate)
+    {
+        return await context.Reservations
+            .Where(r => r.CheckOutDate < currentDate && r.IsCompleted == false)
+            .ToListAsync();
+    }
     public async Task<Reservation?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await context.Set<Reservation>().FindAsync(new object[] { id }, cancellationToken);
@@ -19,13 +26,20 @@ public class ReservationRepository(ApplicationDbContext context) : IReservationR
     }
     public async Task AddAsync(Reservation entity, CancellationToken cancellationToken = default)
     {
+
         await context.Set<Reservation>().AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
-
-    public Task CreateAsync(Reservation reservation, CancellationToken cancellationToken)
+    public async Task UpdateAsync(Reservation reservation)
     {
-        throw new NotImplementedException();
+        context.Reservations.Update(reservation);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task CreateAsync(Reservation reservation, CancellationToken cancellationToken)
+    {
+        await context.Set<Reservation>().AddAsync(reservation, cancellationToken);
+        await context.SaveChangesAsync();
     }
 
     public Task<Reservation?> GetByIdAsync(int id, CancellationToken cancellationToken)
@@ -138,4 +152,6 @@ public class ReservationRepository(ApplicationDbContext context) : IReservationR
     {
         throw new NotImplementedException();
     }
+
+
 }

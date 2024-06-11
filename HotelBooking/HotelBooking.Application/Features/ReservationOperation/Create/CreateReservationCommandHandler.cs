@@ -21,7 +21,11 @@ public class CreateReservationCommandHandler(
             return Result<string>.Failure("Otel bulunamadý");
         }
 
-        var room = await roomRespository.GetByIdAsync(request.RoomId, cancellationToken);
+        var room = await roomRespository.GetByIdAsync(request.RoomId);
+        if (room == null)
+        {
+            return Result<string>.Failure("Oda bulunamadý");
+        }
         var isRoomExist = await roomRespository.AnyAsync(p => p.Id == request.RoomId);
         if (!isRoomExist)
         {
@@ -51,6 +55,7 @@ public class CreateReservationCommandHandler(
 
 
 
+        room.AvailableRoomCount -= 1;
         await reservationRepository.AddAsync(reservation);
 
         string subject = "Rezervasyon Onayý";
@@ -116,6 +121,10 @@ public class CreateReservationCommandHandler(
             <p><b>Sayýn {request.GuestFullName},</b></p>
             <p>Rezervasyon kaydýnýz <b>{hotel!.Name}</b> otelinde baþarýlý bir þekilde oluþturuldu.</p>
             <table>
+                 <tr>
+                    <th>Þehir</th>
+                    <td>{hotel!.City}</td>
+                </tr>
                 <tr>
                     <th>Oda Türü</th>
                     <td>{room!.RoomType}</td>
@@ -141,13 +150,7 @@ public class CreateReservationCommandHandler(
     </div>
 </body>
 </html>";
-        //$"<b>Sayýn {request.GuestFullName},</b><br><br>" +
-        //              $"Rezervasyon kaydýnýz <b>{hotel!.Name}</b> otelinde baþarýlý bir þekilde oluþturuldu.<br>" +
-        //             $"Oda Türü: {room!.RoomType}<br>" +
-        //              $"Giriþ Tarihi: {request.CheckInDate.ToShortDateString()}<br>" +
-        //              $"Çýkýþ Tarihi: {request.CheckOutDate.ToShortDateString()}<br>" +
-        //              $"Toplam Fiyat: {Price:C}<br><br>" +
-        //              "Ýyi günler dileriz.";
+
 
         string emailResponse = await EmailHelper.SendEmailAsync(request.Email, subject, body);
 

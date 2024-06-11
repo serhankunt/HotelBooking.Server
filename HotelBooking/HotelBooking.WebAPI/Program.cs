@@ -1,6 +1,8 @@
 using DefaultCorsPolicyNugetPackage;
+using Hangfire;
 using HotelBooking.Application;
 using HotelBooking.Application.Converter;
+using HotelBooking.Application.Features.ReservationOperation.Check;
 using HotelBooking.Application.Repositories;
 using HotelBooking.Domain.Enums;
 using HotelBooking.Infrastructure;
@@ -15,6 +17,21 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDefaultCors();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
+
+
+//builder.Services.AddHangfire(config => config
+//    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+//    .UseSimpleAssemblyNameTypeSerializer()
+//    .UseRecommendedSerializerSettings()
+//    .UseSqlServerStorage(builder.Configuration.GetConnectionString("Data Source=DESKTOP-L1BOF4K\\SQLEXPRESS;Initial Catalog=HotelBookingDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"), new SqlServerStorageOptions
+//    {
+//        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
+//        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
+//        QueuePollInterval = TimeSpan.Zero,
+//        UseRecommendedIsolationLevel = true,
+//        DisableGlobalLocks = true
+//    }));
+
 
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IRoomRespository, RoomRepository>();
@@ -63,6 +80,11 @@ builder.Services.AddSwaggerGen(setup =>
                 });
 });
 
+builder.Services.AddHangfire(config => config.UseSqlServerStorage("Data Source=DESKTOP-L1BOF4K\\SQLEXPRESS;Initial Catalog=HotelBookingDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+
+builder.Services.AddHangfireServer();
+
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -73,12 +95,21 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseHangfireDashboard();
+
+
 app.UseCors();
 
 app.UseExceptionHandler();
 
 app.MapControllers();
 
+var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
+recurringJobManager.AddOrUpdate<ReservationCheckJob>(
+    "CheckExpiredReservations",
+    job => job.CheckExpiredReservations(),
+    Cron.Minutely
+);
 ExtensionsMiddleware.CreateFirstUser(app);
 
 app.Run();

@@ -44,24 +44,34 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRespository
         await context.Set<Room>().AddAsync(room);
         await context.SaveChangesAsync();
     }
-    public async Task<Room?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Room?> GetByIdAsync(Guid id)
     {
-        return await context.Set<Room>().FindAsync(new object[] { id }, cancellationToken);
+        return await context.Set<Room>().FindAsync(new object[] { id });
     }
     public async Task GetHotelTypeAsync(RoomType roomType, CancellationToken cancellationToken)
     {
         await context.Set<Room>().FirstOrDefaultAsync(h => h.RoomType == roomType, cancellationToken);
 
     }
-    public void Add(Room entity)
-    {
-        throw new NotImplementedException();
-    }
-
     public async Task AddAsync(Room entity, CancellationToken cancellationToken = default)
     {
         await context.Set<Room>().AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
+    }
+    public async void UpdateAsync(Room room)
+    {
+        context.Rooms.Update(room);
+        await context.SaveChangesAsync();
+    }
+
+    public async void Update(Room entity)
+    {
+        context.Rooms.Update(entity);
+        await context.SaveChangesAsync();
+    }
+    public void Add(Room entity)
+    {
+        throw new NotImplementedException();
     }
 
     public Task AddRangeAsync(ICollection<Room> entities, CancellationToken cancellationToken = default)
@@ -78,8 +88,6 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRespository
     {
         return await context.Set<Room>().AnyAsync(expression, cancellationToken);
     }
-
-
 
     public void Delete(Room entity)
     {
@@ -147,13 +155,6 @@ public class RoomRepository(ApplicationDbContext context) : IRoomRespository
     }
 
     public Task<Room?> GetHotelType(RoomType roomType, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-
-
-    public void Update(Room entity)
     {
         throw new NotImplementedException();
     }
