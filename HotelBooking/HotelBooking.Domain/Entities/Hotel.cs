@@ -8,7 +8,8 @@ public sealed class Hotel : Entity
     public string Name { get; set; } = default!;
     public City City { get; set; } = default!;
     public string Town { get; set; } = default!;
-    public decimal? Rating { get; set; }
+    public decimal Rating { get; set; }
+    public int TotalReview { get; set; }
     public HotelType HotelType { get; set; } = default!;
     public ICollection<Room> Rooms { get; set; } = default!;
     public ICollection<Reservation?> Reservations { get; set; } = default!;

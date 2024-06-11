@@ -34,6 +34,10 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
         await context.Set<Hotel>().AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
     }
+    public async Task<Hotel?> FirstOrDefaultAsync(Expression<Func<Hotel, bool>> expression, CancellationToken cancellationToken = default, bool isTrackingActive = true)
+    {
+        return await context.Set<Hotel>().FirstOrDefaultAsync(expression, cancellationToken);
+    }
 
     public async Task<List<Hotel>> GetAllHotel()
     {
@@ -65,10 +69,6 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
         throw new NotImplementedException();
     }
 
-    public Task<Hotel> FirstOrDefaultAsync(Expression<Func<Hotel, bool>> expression, CancellationToken cancellationToken = default, bool isTrackingActive = true)
-    {
-        throw new NotImplementedException();
-    }
 
     public Task<Hotel> GetByExpressionAsync(Expression<Func<Hotel, bool>> expression, CancellationToken cancellationToken = default)
     {
