@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/HotelBooking/HotelBooking.WebAPI/Hangfire.db
+/HotelBooking/HotelBooking.WebAPI/Hangfire.db-shm
+/HotelBooking/HotelBooking.WebAPI/Hangfire.db-wal
