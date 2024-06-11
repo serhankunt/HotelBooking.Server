@@ -10,4 +10,5 @@ public interface IReservationRepository : IRepository<Reservation>
     Task<Reservation?> GetByIdAsync(int id, CancellationToken cancellationToken);
     Task<IEnumerable<Reservation>> GetExpiredReservationsAsync(DateTime currentDate);
     Task UpdateAsync(Reservation reservation);
+
 }

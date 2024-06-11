@@ -11,7 +11,7 @@ public class ReservationRepository(ApplicationDbContext context) : IReservationR
     public async Task<IEnumerable<Reservation>> GetExpiredReservationsAsync(DateTime currentDate)
     {
         return await context.Reservations
-            .Where(r => r.CheckOutDate < currentDate && r.IsCompleted == false)
+            .Where(r => r.CheckOutDate < currentDate && r.IsCompleted == false && r.IsDeleted == false)
             .ToListAsync();
     }
     public async Task<Reservation?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -35,13 +35,21 @@ public class ReservationRepository(ApplicationDbContext context) : IReservationR
         context.Reservations.Update(reservation);
         await context.SaveChangesAsync();
     }
+    public void Update(Reservation reservation)
+    {
+        context.Reservations.Update(reservation);
+        context.SaveChanges();
+    }
 
     public async Task CreateAsync(Reservation reservation, CancellationToken cancellationToken)
     {
         await context.Set<Reservation>().AddAsync(reservation, cancellationToken);
         await context.SaveChangesAsync();
     }
-
+    public async Task<Reservation?> FirstOrDefaultAsync(Expression<Func<Reservation, bool>> expression, CancellationToken cancellationToken = default, bool isTrackingActive = true)
+    {
+        return await context.Set<Reservation>().FirstOrDefaultAsync(expression, cancellationToken);
+    }
     public Task<Reservation?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
@@ -67,10 +75,7 @@ public class ReservationRepository(ApplicationDbContext context) : IReservationR
         throw new NotImplementedException();
     }
 
-    public Task<Reservation> FirstOrDefaultAsync(Expression<Func<Reservation, bool>> expression, CancellationToken cancellationToken = default, bool isTrackingActive = true)
-    {
-        throw new NotImplementedException();
-    }
+
 
     public Task<Reservation> GetByExpressionAsync(Expression<Func<Reservation, bool>> expression, CancellationToken cancellationToken = default)
     {
@@ -123,10 +128,7 @@ public class ReservationRepository(ApplicationDbContext context) : IReservationR
         throw new NotImplementedException();
     }
 
-    public void Update(Reservation entity)
-    {
-        throw new NotImplementedException();
-    }
+
 
     public void UpdateRange(ICollection<Reservation> entities)
     {

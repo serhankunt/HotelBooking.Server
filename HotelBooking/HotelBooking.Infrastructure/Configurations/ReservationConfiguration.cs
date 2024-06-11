@@ -16,6 +16,9 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
             .WithMany(h => h.Reservations!)
             .HasForeignKey(r => r.HotelId);
 
+        builder.HasQueryFilter(x => !x.IsDeleted);
+
+
         //builder
         //    .HasOne(p => p.Room)
         //    .WithMany()

@@ -16,5 +16,6 @@ public class Reservation : Entity
     public int ChildGuestCount { get; set; }
     public decimal Price { get; set; }
     public bool IsCompleted { get; set; } = false;
+    public bool IsDeleted { get; set; } = false;
 
 }
