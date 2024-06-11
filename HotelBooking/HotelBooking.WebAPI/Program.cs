@@ -1,5 +1,6 @@
 using DefaultCorsPolicyNugetPackage;
 using Hangfire;
+using Hangfire.Storage.SQLite;
 using HotelBooking.Application;
 using HotelBooking.Application.Converter;
 using HotelBooking.Application.Features.ReservationOperation.Check;
@@ -80,7 +81,7 @@ builder.Services.AddSwaggerGen(setup =>
                 });
 });
 
-builder.Services.AddHangfire(config => config.UseSqlServerStorage("Data Source=DESKTOP-L1BOF4K\\SQLEXPRESS;Initial Catalog=HotelBookingDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+builder.Services.AddHangfire(config => config.UseSQLiteStorage("Hangfire.db"));
 
 builder.Services.AddHangfireServer();
 
@@ -92,7 +93,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseHangfireDashboard("/gotserhan");
 app.UseHttpsRedirection();
 
 app.UseHangfireDashboard();
