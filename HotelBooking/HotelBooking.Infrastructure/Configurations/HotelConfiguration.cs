@@ -25,9 +25,6 @@ public sealed class HotelConfiguration : IEntityTypeConfiguration<Hotel>
         //builder.Property(p => p.HotelType.Value)
         //    .HasConversion<int>();
 
-        builder.Property(p => p.Rating)
-            .HasDefaultValue(0)
-            .HasColumnType("decimal(2,2)");
 
         builder.Property(p => p.TotalReview)
             .HasDefaultValue(0);

@@ -29,13 +29,24 @@ public class RateHotelCommandHandler(
             {
                 return Result<string>.Failure("Tatil tamamlanmadan puan verilemez");
             }
+            if (reservation.IsDeleted)
+            {
+                return Result<string>.Failure("Bu rezervasyon iptal edildiði için puanlama yapýlamaz");
+            }
+            if (reservation.IsRated)
+            {
+                return Result<string>.Failure("Otel daha önce puanlandý");
+            }
+
 
             var totalRating = hotel.TotalReview * hotel.Rating;
             totalRating += request.Rate;
             hotel.TotalReview += 1;
 
             hotel.Rating = totalRating / hotel.TotalReview;
+            reservation.IsRated = true;
 
+            reservationRepository.Update(reservation);
             hotelRepository.Update(hotel);
 
             return Result<string>.Succeed("Deðerlendirmeniz baþarýyla ulaþtý.");
@@ -44,7 +55,7 @@ public class RateHotelCommandHandler(
         catch (Exception ex)
         {
             Console.WriteLine($"An error occurred: {ex.Message}");
-            return Result<string>.Failure("Bir hatayla karþýlaþýldý");
+            return Result<string>.Failure($"Bir hatayla karþýlaþýldý:{ex}");
         }
 
 

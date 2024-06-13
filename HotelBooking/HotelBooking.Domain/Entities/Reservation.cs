@@ -17,5 +17,6 @@ public class Reservation : Entity
     public decimal Price { get; set; }
     public bool IsCompleted { get; set; } = false;
     public bool IsDeleted { get; set; } = false;
+    public bool IsRated { get; set; } = false;
 
 }
