@@ -78,8 +78,7 @@ public class PaymentRepository : IPaymentRepository
             return new PaymentResponse(payment.Status, null);
         }
 
-        var paymentResponse = new PaymentResponse(payment.Status, payment.PaymentId);
-        return paymentResponse;
+
     }
 
 }

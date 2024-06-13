@@ -1,3 +1,4 @@
+using HotelBooking.Application.Features.Payment;
 using MediatR;
 using TS.Result;
 
@@ -14,4 +15,6 @@ public class CreateReservationCommand : IRequest<Result<string>>
     public int AdultGuestCount { get; set; }
     public int ChildGuestCount { get; set; }
     public decimal? Price { get; set; }
+
+    public PaymentCommand PaymentCommand { get; set; } = default!;
 }
