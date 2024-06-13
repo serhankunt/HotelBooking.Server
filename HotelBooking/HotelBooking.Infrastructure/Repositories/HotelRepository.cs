@@ -39,6 +39,12 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
         return await context.Set<Hotel>().FirstOrDefaultAsync(expression, cancellationToken);
     }
 
+    public void Update(Hotel hotel)
+    {
+        context.Hotels.Update(hotel);
+        context.SaveChanges();
+    }
+
     public async Task<List<Hotel>> GetAllHotel()
     {
         return await context.Set<Hotel>().ToListAsync();
@@ -115,10 +121,6 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
         throw new NotImplementedException();
     }
 
-    public void Update(Hotel entity)
-    {
-        throw new NotImplementedException();
-    }
 
     public void UpdateRange(ICollection<Hotel> entities)
     {

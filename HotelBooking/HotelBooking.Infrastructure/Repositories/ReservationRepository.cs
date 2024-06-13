@@ -46,6 +46,10 @@ public class ReservationRepository(ApplicationDbContext context) : IReservationR
         await context.Set<Reservation>().AddAsync(reservation, cancellationToken);
         await context.SaveChangesAsync();
     }
+    public async Task<bool> AnyAsync(Expression<Func<Reservation, bool>> expression, CancellationToken cancellationToken = default)
+    {
+        return await context.Set<Reservation>().AnyAsync(expression, cancellationToken);
+    }
     public async Task<Reservation?> FirstOrDefaultAsync(Expression<Func<Reservation, bool>> expression, CancellationToken cancellationToken = default, bool isTrackingActive = true)
     {
         return await context.Set<Reservation>().FirstOrDefaultAsync(expression, cancellationToken);
@@ -92,10 +96,7 @@ public class ReservationRepository(ApplicationDbContext context) : IReservationR
         throw new NotImplementedException();
     }
 
-    public Task<bool> AnyAsync(Expression<Func<Reservation, bool>> expression, CancellationToken cancellationToken = default)
-    {
-        throw new NotImplementedException();
-    }
+
 
     public bool Any(Expression<Func<Reservation, bool>> expression)
     {

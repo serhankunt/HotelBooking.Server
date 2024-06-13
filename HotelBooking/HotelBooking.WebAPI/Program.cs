@@ -2,6 +2,7 @@ using DefaultCorsPolicyNugetPackage;
 using Hangfire;
 using HotelBooking.Application;
 using HotelBooking.Application.Converter;
+using HotelBooking.Application.Features.Payment;
 using HotelBooking.Application.Features.ReservationOperation.Check;
 using HotelBooking.Application.Repositories;
 using HotelBooking.Domain.Enums;
@@ -18,21 +19,18 @@ builder.Services.AddDefaultCors();
 builder.Services.AddApplication();
 builder.Services.AddInfrastructure(builder.Configuration);
 
-
-//builder.Services.AddHangfire(config => config
-//    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
-//    .UseSimpleAssemblyNameTypeSerializer()
-//    .UseRecommendedSerializerSettings()
-//    .UseSqlServerStorage(builder.Configuration.GetConnectionString("Data Source=DESKTOP-L1BOF4K\\SQLEXPRESS;Initial Catalog=HotelBookingDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"), new SqlServerStorageOptions
-//    {
-//        CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
-//        SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),
-//        QueuePollInterval = TimeSpan.Zero,
-//        UseRecommendedIsolationLevel = true,
-//        DisableGlobalLocks = true
-//    }));
+builder.Services.AddCors(cfr =>
+{
+    cfr.AddDefaultPolicy(policy =>
+    {
+        policy.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod().SetIsOriginAllowed(policy => true);
+    });
+});
 
 
+builder.Services.AddScoped<CreatePaymentUseCase>();
+
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<IHotelRepository, HotelRepository>();
 builder.Services.AddScoped<IRoomRespository, RoomRepository>();
 builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
@@ -108,7 +106,7 @@ var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>(
 recurringJobManager.AddOrUpdate<ReservationCheckJob>(
     "CheckExpiredReservations",
     job => job.CheckExpiredReservations(),
-    Cron.Minutely
+    Cron.Hourly
 );
 ExtensionsMiddleware.CreateFirstUser(app);
 
