@@ -10,25 +10,43 @@ public class RateHotelCommandHandler(
 {
     public async Task<Result<string>> Handle(RateHotelCommand request, CancellationToken cancellationToken)
     {
-        var isReservationExist = await reservationRepository.AnyAsync(p => p.Id == request.ReservationId);
-        if (isReservationExist)
+        try
         {
-            return Result<string>.Failure("Rezervasyon bilgisine ulaþýlamadý");
+            var isReservationExist = await reservationRepository.AnyAsync(p => p.Id == request.ReservationId);
+            if (!isReservationExist)
+            {
+                return Result<string>.Failure("Rezervasyon bilgisine ulaþýlamadý");
+            }
+
+            var reservation = await reservationRepository.FirstOrDefaultAsync(p => p.Id == request.ReservationId);
+
+            var hotel = await hotelRepository.FirstOrDefaultAsync(p => p.Id == reservation.HotelId);
+            if (hotel is null)
+            {
+                return Result<string>.Failure("Otel bulunamadý");
+            }
+            if (!reservation.IsCompleted)
+            {
+                return Result<string>.Failure("Tatil tamamlanmadan puan verilemez");
+            }
+
+            var totalRating = hotel.TotalReview * hotel.Rating;
+            totalRating += request.Rate;
+            hotel.TotalReview += 1;
+
+            hotel.Rating = totalRating / hotel.TotalReview;
+
+            hotelRepository.Update(hotel);
+
+            return Result<string>.Succeed("Deðerlendirmeniz baþarýyla ulaþtý.");
         }
 
-        var reservation = await reservationRepository.FirstOrDefaultAsync(p => p.Id == request.ReservationId);
-
-        var hotel = await hotelRepository.FirstOrDefaultAsync(p => p.Id == reservation.HotelId);
-        if (hotel is null)
+        catch (Exception ex)
         {
-            return Result<string>.Failure("Otel bulunamadý");
+            Console.WriteLine($"An error occurred: {ex.Message}");
+            return Result<string>.Failure("Bir hatayla karþýlaþýldý");
         }
 
-        hotel.Rating = request.Rate;
-
-        hotelRepository.Update(hotel);
-
-        return Result<string>.Succeed("Deðerlendirmeniz baþarýyla ulaþtý.");
 
     }
 }

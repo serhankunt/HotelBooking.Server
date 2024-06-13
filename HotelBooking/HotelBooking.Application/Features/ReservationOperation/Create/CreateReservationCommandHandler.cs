@@ -1,3 +1,4 @@
+using HotelBooking.Application.Features.Payment;
 using HotelBooking.Application.Repositories;
 using HotelBooking.Application.Services;
 using HotelBooking.Domain.Entities;
@@ -9,7 +10,8 @@ namespace HotelBooking.Application.Features.ReservationOperation.Create;
 public class CreateReservationCommandHandler(
     IHotelRepository hotelRepository,
     IRoomRespository roomRespository,
-    IReservationRepository reservationRepository) : IRequestHandler<CreateReservationCommand, Result<string>>
+    IReservationRepository reservationRepository,
+    PaymentCommandHandler paymentCommandHandler) : IRequestHandler<CreateReservationCommand, Result<string>>
 {
     public async Task<Result<string>> Handle(CreateReservationCommand request, CancellationToken cancellationToken)
     {
@@ -38,6 +40,26 @@ public class CreateReservationCommandHandler(
         }
 
         decimal Price = (decimal)((request.CheckOutDate.Date - request.CheckInDate.Date).Days) * request.AdultGuestCount * 1000;
+        int paidMoney;
+        var totalPrice = request.AdultGuestCount * Price;
+        bool convertToInt = int.TryParse(request.PaymentCommand.PaidPrice, out paidMoney);
+        if (!convertToInt)
+        {
+            return Result<string>.Failure("Ödeme alanýna geçerli deðer giriniz");
+        }
+        if (totalPrice > paidMoney)
+        {
+            return Result<string>.Failure("Yetersiz ödeme");
+        }
+
+
+        var paymentResult = await paymentCommandHandler.Handle(request.PaymentCommand, cancellationToken);
+        if (!paymentResult.IsSuccessful)
+        {
+            return Result<string>.Failure("Ödeme baþarýsýz: " + paymentResult.ErrorMessages);
+        }
+
+
 
         var reservation = new Reservation
         {
@@ -49,8 +71,7 @@ public class CreateReservationCommandHandler(
             CheckOutDate = request.CheckOutDate,
             AdultGuestCount = request.AdultGuestCount,
             ChildGuestCount = request.ChildGuestCount,
-            Price = Price,
-
+            Price = Price
         };
 
 
