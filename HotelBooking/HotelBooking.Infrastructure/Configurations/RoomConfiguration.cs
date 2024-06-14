@@ -11,5 +11,7 @@ public class RoomConfiguration : IEntityTypeConfiguration<Room>
     {
         builder.Property(p => p.RoomType)
             .HasConversion(v => v.Value, v => RoomType.FromValue(v));
+
+        builder.Property(p => p.Price).IsRequired();
     }
 }

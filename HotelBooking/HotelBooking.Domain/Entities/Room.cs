@@ -10,4 +10,5 @@ public sealed class Room : Entity
     public int AvailableRoomCount { get; set; }
     public Guid HotelId { get; set; }
     public Hotel Hotel { get; set; } = default!;
+    public decimal Price { get; set; } = default!;
 }

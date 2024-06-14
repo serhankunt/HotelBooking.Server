@@ -71,7 +71,7 @@ public class CreateReservationCommandHandler(
             CheckOutDate = request.CheckOutDate,
             AdultGuestCount = request.AdultGuestCount,
             ChildGuestCount = request.ChildGuestCount,
-            Price = Price
+            Price = room.Price * ((request.CheckOutDate.Date - request.CheckInDate.Date).Days)
         };
 
 
