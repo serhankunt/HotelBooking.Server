@@ -105,7 +105,7 @@ var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>(
 recurringJobManager.AddOrUpdate<ReservationCheckJob>(
     "CheckExpiredReservations",
     job => job.CheckExpiredReservations(),
-    Cron.Hourly
+    Cron.Minutely
 );
 ExtensionsMiddleware.CreateFirstUser(app);
 

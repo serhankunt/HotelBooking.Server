@@ -27,7 +27,8 @@ public class CreateRoomCommandHandler(
             RoomType = request.RoomType,
             TotalRoomCount = request.Quantity,
             AvailableRoomCount = request.Quantity,
-            HotelId = request.HotelId
+            HotelId = request.HotelId,
+            Price = request.Price
         };
 
         await roomRespository.AddAsync(room);
