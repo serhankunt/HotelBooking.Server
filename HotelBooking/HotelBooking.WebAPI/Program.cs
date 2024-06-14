@@ -51,7 +51,6 @@ builder.Services.AddControllers()
         options.SerializerSettings.Converters.Add(new SmartEnumJsonConverter<RoomType>());
     }); ;
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.AddSwaggerGen(setup =>
 {
     var jwtSecuritySheme = new OpenApiSecurityScheme
@@ -78,13 +77,13 @@ builder.Services.AddSwaggerGen(setup =>
                 });
 });
 
-builder.Services.AddHangfire(config => config.UseSqlServerStorage("Data Source=DESKTOP-L1BOF4K\\SQLEXPRESS;Initial Catalog=HotelBookingDb;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+builder.Services.AddHangfire(config => config.UseSqlServerStorage(builder.Configuration.GetConnectionString("SqlServer")));
 
 builder.Services.AddHangfireServer();
 
 
 var app = builder.Build();
-
+app.UseHangfireDashboard("/serverjobs");
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
