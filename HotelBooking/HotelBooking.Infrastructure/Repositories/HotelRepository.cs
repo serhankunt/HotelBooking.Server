@@ -38,6 +38,10 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
     {
         return await context.Set<Hotel>().FirstOrDefaultAsync(expression, cancellationToken);
     }
+    public async Task<List<Hotel>> GetAvailableHotels(Expression<Func<Hotel, bool>> expression, CancellationToken cancellationToken = default)
+    {
+        return await context.Set<Hotel>().Where(expression).ToListAsync(cancellationToken);
+    }
 
     public void Update(Hotel hotel)
     {

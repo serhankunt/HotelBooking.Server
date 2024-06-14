@@ -1,4 +1,5 @@
 ﻿using HotelBooking.Application.Features.HotelOperation.Create;
+using HotelBooking.Application.Features.HotelOperation.GetAvailableHotels;
 using HotelBooking.Application.Features.HotelOperation.GetAvailableRoomOfHotelsById;
 using HotelBooking.Application.Features.HotelOperation.GetById;
 using HotelBooking.Application.Features.HotelOperation.GetCapacityById;
@@ -45,6 +46,13 @@ public class HotelsController(IMediator mediator) : ControllerBase
 
     [HttpPost]
     public async Task<IActionResult> RateHotel(RateHotelCommand request, CancellationToken cancellationToken)
+    {
+        var response = await mediator.Send(request, cancellationToken);
+
+        return StatusCode(response.StatusCode, response);
+    }
+    [HttpPost]
+    public async Task<IActionResult> GetAvailableHotels(GetAvailableHotelsCommand request, CancellationToken cancellationToken)
     {
         var response = await mediator.Send(request, cancellationToken);
 
