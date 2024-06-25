@@ -1,5 +1,6 @@
 using HotelBooking.Application.Features.HotelOperation.GetAvailableHotels;
 using HotelBooking.Application.Repositories;
+using HotelBooking.Domain.DTOs;
 using HotelBooking.Domain.Entities;
 using HotelBooking.Domain.Enums;
 using HotelBooking.Infrastructure.Context;
@@ -39,7 +40,8 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
     {
         return await context.Set<Hotel>().FirstOrDefaultAsync(expression, cancellationToken);
     }
-    public async Task<List<Hotel>> GetAvailableHotels(Expression<Func<Hotel, bool>> expression, GetAvailableHotelsCommand request, CancellationToken cancellationToken)
+
+    public async Task<List<AvailableHotelDto>> GetAvailableHotels(Expression<Func<Hotel, bool>> expression, GetAvailableHotelsCommand request, CancellationToken cancellationToken)
     {
         var hotels = await context.Hotels
            .Where(p => p.City == request.City)
@@ -52,7 +54,6 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
         foreach (var hotel in hotels)
         {
             bool isAvailable = true;
-
 
             for (DateTime date = request.CheckInDate; date < request.CheckOutDate; date = date.AddDays(1))
             {
@@ -132,10 +133,30 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
         //    }
         //}
         #endregion
+        //
+        List<AvailableHotelDto?> result = availableHotels.SelectMany(hotel => hotel.Rooms, (hotel, room) => new AvailableHotelDto
+        {
+            Name = hotel.Name,
+            City = hotel.City,
+            Town = hotel.Town,
+            Rating = hotel.Rating,
+            TotalReview = hotel.TotalReview,
+            HotelType = hotel.HotelType,
+            Rooms = hotel.Rooms.Select(room => new RoomDto
+            {
+                RoomType = room.RoomType,
+                TotalRoomCount = room.TotalRoomCount,
+                AvailableRoomCount = room.AvailableRoomCount,
+                Price = room.Price
+            }).ToList()
+        })
+        .GroupBy(x => x.Name)
+        .Select(g => g.FirstOrDefault())
+        .ToList();
 
+        return result;
 
-
-        return availableHotels;
+        //return availableHotels;
 
     }
 

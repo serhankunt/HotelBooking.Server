@@ -8,6 +8,9 @@ public class GetAvailableRoomOfHotelsByIdCommandHandler(IRoomRespository roomRes
 {
     public async Task<Result<string>> Handle(GetAvailableRoomOfHotelsByIdCommand request, CancellationToken cancellationToken)
     {
+
+
+
         var count = await roomRespository.GetCapacityByIdAsync(request.Id, cancellationToken);
 
         return Result<string>.Succeed($"Otelin müsait oda sayýsý : {count}");
