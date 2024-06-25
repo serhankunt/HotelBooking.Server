@@ -1,3 +1,4 @@
+using HotelBooking.Application.Features.HotelOperation.GetAvailableHotels;
 using HotelBooking.Application.Repositories;
 using HotelBooking.Domain.Entities;
 using HotelBooking.Domain.Enums;
@@ -38,9 +39,104 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
     {
         return await context.Set<Hotel>().FirstOrDefaultAsync(expression, cancellationToken);
     }
-    public async Task<List<Hotel>> GetAvailableHotels(Expression<Func<Hotel, bool>> expression, CancellationToken cancellationToken = default)
+    public async Task<List<Hotel>> GetAvailableHotels(Expression<Func<Hotel, bool>> expression, GetAvailableHotelsCommand request, CancellationToken cancellationToken)
     {
-        return await context.Set<Hotel>().Where(expression).ToListAsync(cancellationToken);
+        var hotels = await context.Hotels
+           .Where(p => p.City == request.City)
+           .Include(h => h.Rooms)
+           .Include(h => h.Reservations)
+           .ToListAsync(cancellationToken);
+
+        var availableHotels = new List<Hotel>();
+
+        foreach (var hotel in hotels)
+        {
+            bool isAvailable = true;
+
+
+            for (DateTime date = request.CheckInDate; date < request.CheckOutDate; date = date.AddDays(1))
+            {
+                int availableRooms = hotel.Rooms.Sum(room => room.TotalRoomCount);
+
+                foreach (var reservation in hotel.Reservations)
+                {
+                    if (reservation is null)
+                    {
+                        break;
+                    }
+                    if (reservation.CheckInDate <= date && reservation.CheckOutDate > date)
+                    {
+                        availableRooms--;
+                    }
+                }
+
+                if (availableRooms <= 0)
+                {
+                    isAvailable = false;
+                    break;
+                }
+            }
+
+            if (isAvailable)
+            {
+                availableHotels.Add(hotel);
+            }
+        }
+
+        #region Deneme1
+        //foreach (var hotel in hotels)
+        //{
+        //    bool isAvailable = true;
+
+        //    // Check availability for each room type
+        //    foreach (var room in hotel.Rooms)
+        //    {
+        //        int initialAvailableRoomCount = room.AvailableRoomCount;
+
+        //        // Calculate available rooms for each day in the range
+        //        for (DateTime date = request.CheckInDate; date < request.CheckOutDate; date = date.AddDays(1))
+        //        {
+        //            // Count the number of reservations that overlap with this date
+        //            int overlappingReservations = hotel.Reservations.Count(reservation =>
+        //                reservation.RoomId == room.Id &&
+        //                reservation.CheckInDate <= date &&
+        //                reservation.CheckOutDate > date &&
+        //                !reservation.IsDeleted
+        //            );
+
+        //            // Update the available room count for this date
+        //            int currentAvailableRoomCount = room.TotalRoomCount - overlappingReservations;
+
+        //            if (currentAvailableRoomCount <= 0)
+        //            {
+        //                isAvailable = false;
+        //                break;
+        //            }
+
+        //            // Update the minimum available room count across the range
+        //            initialAvailableRoomCount = Math.Min(initialAvailableRoomCount, currentAvailableRoomCount);
+        //        }
+
+        //        // Set the final available room count for this room type
+        //        room.AvailableRoomCount = initialAvailableRoomCount;
+
+        //        if (!isAvailable)
+        //        {
+        //            break;
+        //        }
+        //    }
+
+        //    if (isAvailable)
+        //    {
+        //        availableHotels.Add(hotel);
+        //    }
+        //}
+        #endregion
+
+
+
+        return availableHotels;
+
     }
 
     public void Update(Hotel hotel)

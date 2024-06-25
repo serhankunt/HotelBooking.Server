@@ -41,6 +41,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.WriteIndented = true;
     })
@@ -49,6 +50,8 @@ builder.Services.AddControllers()
         options.SerializerSettings.Converters.Add(new SmartEnumJsonConverter<City>());
         options.SerializerSettings.Converters.Add(new SmartEnumJsonConverter<HotelType>());
         options.SerializerSettings.Converters.Add(new SmartEnumJsonConverter<RoomType>());
+
+        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
     }); ;
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(setup =>
@@ -91,9 +94,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
-app.UseHangfireDashboard();
-
 
 app.UseCors();
 
