@@ -1,4 +1,5 @@
 using HotelBooking.Application.Features.HotelOperation.GetAvailableHotels;
+using HotelBooking.Application.Features.HotelOperation.GetAvailableRoomOfHotelsById;
 using HotelBooking.Application.Repositories;
 using HotelBooking.Domain.DTOs;
 using HotelBooking.Domain.Entities;
@@ -6,6 +7,7 @@ using HotelBooking.Domain.Enums;
 using HotelBooking.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
+using TS.Result;
 
 namespace HotelBooking.Infrastructure.Repositories;
 
@@ -40,7 +42,24 @@ public class HotelRepository(ApplicationDbContext context) : IHotelRepository
     {
         return await context.Set<Hotel>().FirstOrDefaultAsync(expression, cancellationToken);
     }
+    public async Task<Result<string>> GetPercentageOfHotelIsFullAsync(GetAvailableRoomOfHotelsByIdCommand request, CancellationToken cancellationToken)
+    {
+        //var hotel = await context.Hotels.FirstOrDefaultAsync(p => p.Id == request.Id);
+        var hotel = await context.Hotels
+        .Where(p => p.Id == request.Id)
+        .Include(h => h.Rooms)
+        .Include(h => h.Reservations)
+        .FirstOrDefaultAsync();
+        if (hotel is null)
+        {
+            return Result<string>.Failure("Otel bulunamadý");
+        }
+        //int availableRooms = hotel.Rooms.Sum(room => room.TotalRoomCount);
+        int totalRooms = hotel.Rooms.Sum(room => room.TotalRoomCount);
+        int occupancyRoomCount = hotel.Reservations.Where(x => x.CheckInDate <= request.CheckOutDate).Count(x => x.CheckOutDate > request.CheckInDate);
 
+        return Result<string>.Succeed($"Otelin %{((occupancyRoomCount / (double)totalRooms) * 100).ToString("#.#0")} dolu");
+    }
     public async Task<List<AvailableHotelDto>> GetAvailableHotels(Expression<Func<Hotel, bool>> expression, GetAvailableHotelsCommand request, CancellationToken cancellationToken)
     {
         var hotels = await context.Hotels

@@ -7,7 +7,7 @@ public class ReservationCheckJob(IReservationRepository reservationRepository,
 {
     public async Task CheckExpiredReservations()
     {
-        var expiredReservations = await reservationRepository.GetExpiredReservationsAsync(DateTime.UtcNow);
+        var expiredReservations = await reservationRepository.GetExpiredReservationsAsync(DateTime.Now);
 
         foreach (var reservation in expiredReservations)
         {
